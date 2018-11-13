@@ -27,10 +27,10 @@ function [vad_detected, vad_now]= vad(audio)
     
   % 依据门限判断本帧的VAD值
   signal = reshape(signal, N, r+1);
-  power = 1/N * sum(signal.^2); 
+  power = sum(signal.^2)./N; 
   power_min = min(power);
 
-  if(log10(power(end)/16384^2)>=log10(12*power_min/16384^2))
+  if(log10(power(end)/16384^2)>=log10(50*power_min/16384^2))
     vad_detected = 1;
   elseif (log10(power(end)/16384^2)<=-4.8)
     vad_detected = 0;

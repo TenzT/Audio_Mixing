@@ -1,3 +1,4 @@
+clear;clc;
 
 %%% 参数设置 %%%
 r = 100;  % 往前读的帧数
@@ -7,7 +8,7 @@ Fs = 48000; % 音频采样率
 
 %%% 读入一路信号并处理 %%%
 file1 = 'vadtest.wav';
-[data1 fs] = audioread(file1);
+[data1 fs] = audioread(file1, 'native');
 
 % 若采样率不足,重采样成48kHz
 if(fs ~= Fs)
@@ -21,7 +22,7 @@ data1 = data1';
 
 % 截断信号使得抽样点成为整数帧
 data1 = data1(:, 1:N * floor(size(data1,2)/N));
-% data1(1,:) = data1(1,:) ./ max(data1(1,:)) * (2*16384);
+% data1(1,:) = data1(1,:)/max(data1(1,:)) * (2*16384);
 
 % 自己生成信号做对比
 data2 = randn(2,size(data1,2));
