@@ -30,28 +30,48 @@ data2 = randn(2,size(data1,2));
 data2(2,:) = 1;
 NFrame = size(data1, 2)/N;
 
-% VAD默认为1，即默认为有声音
-vad_detected = 1;
-vad_now = 1;
-
 %%% 遍历所有帧
 for i = 1:NFrame
-  
-  % 根据论文当超过100帧时候，VAD判断才有意义
-  if (i>=101)
-    [vad_detected, vad_now]= vad(data1(:, 1+(i-101)*N:i*N));
-    % 更新当前帧的VAD值
-    data1(2, 1+(i-1)*N:i*2048) = vad_detected;
     
-    [vad_detected, vad_now]= vad(data2(:, 1+(i-101)*N:i*N));
-    % 更新当前帧的VAD值
-    data2(2, 1+(i-1)*N:i*2048) = vad_detected;
-  end
+%-------- 获取当前帧VAD ------------
+    % 基于短时功率和过零率得到VAD
+    if (i<101)
+        % 第一路信号
+        [vad_detected, vad_now]= vad_zero(data1(:, 1+(i-1)*N:i*N));
+        % 更新当前帧的VAD值
+        data1(2, 1+(i-1)*N:i*2048) = vad_detected;
 
-  % 当前帧的2048个点
-  this_frame1 = data1(:, 1+(i-1)*N:i*2048);
+        % 第二路信号
+        [vad_detected, vad_now]= vad_zero(data2(:, 1+(i-1)*N:i*N));
+        % 更新当前帧的VAD值
+        data2(2, 1+(i-1)*N:i*2048) = vad_detected;
 
-  % 滤波器计算和响度处理
+        % 第三路信号.....
+    end
+
+    % 当超过100帧时候，使用论文的VAD算法
+    if (i>=101)
+        % 第一路信号
+        [vad_detected, vad_now]= vad(data1(:, 1+(i-101)*N:i*N));
+        % 更新当前帧的VAD值
+        data1(2, 1+(i-1)*N:i*2048) = vad_detected;
+
+        % 第二路信号
+        [vad_detected, vad_now]= vad(data2(:, 1+(i-101)*N:i*N));
+        % 更新当前帧的VAD值
+        data2(2, 1+(i-1)*N:i*2048) = vad_detected;
+
+        % 第三路信号.....
+
+    end
+%---------------------------------
+
+    % 当前帧的数据，提取出来方便后面处理
+    this_frame1 = data1(:, 1+(i-1)*N:i*2048);
+
+%-------利用vad+now来计算滤波器和响度处理--------
+
+
 end
 
 % 观察vad是否正确

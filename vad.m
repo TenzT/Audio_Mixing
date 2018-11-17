@@ -17,11 +17,11 @@ function [vad_detected, vad_now]= vad(audio)
   vad_now = 1;
   
   signal = audio(1,:);  % 输入的信号
-  sign = audio(2,:);
-  sign = sign(1:10:end); % 提取出当前的VAD
+  vad_before = audio(2,:);
+  vad_before = vad_before(1:10:end); % 提取出当前的VAD
   
   % 根据前5帧的VAD输出的推算当前帧输出的VAD
-  if(sum(sign(end-5:end-1)))==0
+  if(sum(vad_before(end-5:end-1)))==0
     vad_now = 0;
   end
     
