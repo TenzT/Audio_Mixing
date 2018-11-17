@@ -7,7 +7,7 @@ function [vad_detected, vad_now]= vad(audio)
   % audio: 2行 N*(r+1) 列
   % @output
   % vad_detected:当前帧的计算出来的VAD  0:非语音 1:语音
-  % vad_now:根据前5帧判断出来的VAD  0:非语音 1:语音
+  % vad_now:根据前5帧判断出来的VAD, 用于计算当前的滤波器和响度计算  0:非语音 1:语音
   
   
   r = 100;  % 往前追溯100帧
@@ -30,7 +30,7 @@ function [vad_detected, vad_now]= vad(audio)
   power = sum(signal.^2)./N; 
   power_min = min(power);
 
-  if(log10(power(end)/16384^2)>=log10(50*power_min/16384^2))
+  if(log10(power(end)/16384^2)>=log10(100*power_min/16384^2))
     vad_detected = 1;
   elseif (log10(power(end)/16384^2)<=-4.8)
     vad_detected = 0;

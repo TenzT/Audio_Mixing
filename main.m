@@ -1,5 +1,6 @@
 clear;clc;
 
+
 %%% 参数设置 %%%
 r = 100;  % 往前读的帧数
 N = 2048; % 每帧抽样点数
@@ -46,7 +47,11 @@ for i = 1:NFrame
     % 更新当前帧的VAD值
     data2(2, 1+(i-1)*N:i*2048) = vad_detected;
   end
+
+  % 当前帧的2048个点
   this_frame1 = data1(:, 1+(i-1)*N:i*2048);
+
+  % 滤波器计算和响度处理
 end
 
 % 观察vad是否正确

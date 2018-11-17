@@ -9,10 +9,10 @@ function [rxx]= autocorr_my(signal, N)
   % rxx:自相关序列
   rxx = zeros(1, N/2-100);
   for m = 100:N/2-1
-    signal_temp = zeros(1,size(signal,2));
+    signal_temp = int16(zeros(1,size(signal,2)));
     signal_temp(1:end-m) = signal(m+1:end);
-    signal_temp = signal .* signal_temp;
+    signal_temp = signal_temp .* signal;
     rxx(m-99) = sum(signal_temp(1:N/2));
   end
 
-endfunction
+end
