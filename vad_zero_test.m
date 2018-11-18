@@ -1,11 +1,12 @@
 clc;clear;
 
 Fs = 48000;
-file1 = 'vadtest.wav';
+file1 = 'low.wav';
 [s,fs]=audioread(file1, 'native');
 if(fs ~= Fs)
   s = resample(s, Fs, fs);  
 end
+s = s / 10;
 s = double(s(:,1))./32768;
 
 %s=s+(rand(length(s),1)-0.5)*sqrt(12*0.0001);
@@ -30,9 +31,9 @@ subplot(312);plot(ste);title('Short time energy');xlabel('Frame');
 
 subplot(313);plot(zcc);title('Zerocrossing counter');xlabel('Frame');
 
-t_e=0.05; % threshold of STE
+t_e=1; % threshold of STE
 
-t_z=80; % threshold of ZCC
+t_z=150; % threshold of ZCC
 
 vad=(ste>t_e).*(zcc<t_z);
 

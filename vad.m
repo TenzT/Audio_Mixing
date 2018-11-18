@@ -30,9 +30,9 @@ function [vad_detected, vad_now]= vad(audio)
   power = sum(signal.^2)./N; 
   power_min = min(power);
 
-  if(log10(power(end)/16384^2)>=log10(100*power_min/16384^2))
+  if(log10(power(end)/16384^2)>=log10(150*power_min/16384^2))
     vad_detected = 1;
-  elseif (log10(power(end)/16384^2)<=-4.8)
+  elseif (log10(power(end)/16384^2)<=-4)
     vad_detected = 0;
   else
     signal = signal(:,end)'; 

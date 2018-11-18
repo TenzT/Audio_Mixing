@@ -8,26 +8,45 @@ Fs = 48000; % 音频采样率
 
 
 %%% 读入一路信号并处理 %%%
-file1 = 'vadtest.wav';
-[data1 fs] = audioread(file1, 'native');
+file1 = 'interval.wav';
+[data1 fs1] = audioread(file1, 'native');
+data1 = data1 * 10;
+
+file2 = 'low.wav';
+[data2 fs2] = audioread(file2, 'native');
+data2 = data2 / 10;
+
+file3 = 'low_high.wav';
+[data3 fs3] = audioread(file3, 'native');
+data3 = data3 ;
 
 % 若采样率不足,重采样成48kHz
-if(fs ~= Fs)
-  data1 = resample(data, Fs, fs);  
+if(fs1 ~= Fs)
+  data1 = resample(data1, Fs, fs1);  
+end
+if(fs2 ~= Fs)
+    data2 = resample(data2, Fs, fs2);  
+end
+if(fs3 ~= Fs)
+    data2 = resample(data2, Fs, fs2);  
 end
 
 % 变成单声道信号并将另一个维度变成VAD标志
 data1(:, 2) = ones(size(data1, 1),1);
 data1 = data1';
-% sound(data1,Fs);
+
+data2(:, 2) = ones(size(data2, 1),1);
+data2 = data2';
+
+data3(:, 2) = ones(size(data3, 1),1);
+data3 = data3';
 
 % 截断信号使得抽样点成为整数帧
-data1 = data1(:, 1:N * floor(size(data1,2)/N));
-% data1(1,:) = data1(1,:)/max(data1(1,:)) * (2*16384);
+max_length = min([size(data1, 2),size(data2, 2), size(data3,2)]);
+data1 = data1(:, 1:N * (floor(max_length/N)-1));
+data2 = data2(:, 1:N * (floor(max_length/N)-1));
+data3 = data3(:, 1:N * (floor(max_length/N)-1));
 
-% 自己生成信号做对比
-data2 = randn(2,size(data1,2));
-data2(2,:) = 1;
 NFrame = size(data1, 2)/N;
 
 %%% 遍历所有帧
@@ -47,6 +66,9 @@ for i = 1:NFrame
         data2(2, 1+(i-1)*N:i*2048) = vad_detected;
 
         % 第三路信号.....
+        [vad_detected, vad_now]= vad_zero(data3(:, 1+(i-1)*N:i*N));
+        % 更新当前帧的VAD值
+        data3(2, 1+(i-1)*N:i*2048) = vad_detected;
     end
 
     % 当超过100帧时候，使用论文的VAD算法
@@ -62,12 +84,17 @@ for i = 1:NFrame
         data2(2, 1+(i-1)*N:i*2048) = vad_detected;
 
         % 第三路信号.....
+        [vad_detected, vad_now]= vad(data3(:, 1+(i-101)*N:i*N));
+        % 更新当前帧的VAD值
+        data3(2, 1+(i-1)*N:i*2048) = vad_detected;
 
     end
 %---------------------------------
 
     % 当前帧的数据，提取出来方便后面处理
     this_frame1 = data1(:, 1+(i-1)*N:i*2048);
+    this_frame2 = data2(:, 1+(i-1)*N:i*2048);
+    this_frame3 = data3(:, 1+(i-1)*N:i*2048);
 
 %-------利用vad+now来计算滤波器和响度处理--------
 
@@ -75,15 +102,29 @@ for i = 1:NFrame
 end
 
 % 观察vad是否正确
+figure;
+title('第一路信号');
 subplot(211);
 plot(data1(1,:));
+axis([0,500000, -4e4, 4e4]);
 subplot(212);
 plot(data1(2,:));
 axis([0,500000, -1, 2]);
 
 figure;
+title('第二路信号');
 subplot(211);
 plot(data2(1,:));
+axis([0,500000, -4e4, 4e4]);
 subplot(212);
 plot(data2(2,:));
-axis([0,500000, -1, 2]);  
+axis([0,500000, -1, 2]); 
+
+figure;
+title('第三路信号');
+subplot(211);
+plot(data3(1,:));
+axis([0,500000, -4e4, 4e4]);
+subplot(212);
+plot(data3(2,:));
+axis([0,500000, -1, 2]); 

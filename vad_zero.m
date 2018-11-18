@@ -14,8 +14,8 @@ function [vad_detected, vad_now]= vad_zero(audio)
     
     signal = double(audio(1,:))/32768;  % 输入的信号并归一化
 
-    t_e=0.05; % STE的门限
-    t_z=80; % 过零率门限
+    t_e=0.8; % STE的门限
+    t_z=150; % 过零率门限
 
     ste = sum(signal.^2);
     zcc=sum(signal(1:end-1).*signal(2:end)<0);
