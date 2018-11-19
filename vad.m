@@ -1,5 +1,5 @@
-%% Author: 谭德志 <tandezhi@master.local>
-%% Created: 2018-11-13
+%% 姓名: 谭德志 
+%% 学号: 18215363
 function [vad_detected, vad_now]= vad(audio)
 
   % 输入带标记信号，输出当前帧判断出当前帧的预期VAD和输出的VAD 

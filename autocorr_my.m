@@ -1,5 +1,5 @@
-%% Author: 谭德志 <tandezhi@master.local>
-%% Created: 2018-11-13
+%% 姓名: 谭德志 
+%% 学号: 18215363
 function [rxx]= autocorr_my(signal, N)
 
   % 计算一帧的自相关序列 
