@@ -54,17 +54,17 @@ for i = 1:NFrame
      % 基于短时功率和过零率得到VAD
     if (i<101)
         % 第一路信号
-        [vad_detected, vad_now]= vad_zero(data1(:, 1+(i-1)*N:i*N));
+        [vad_detected, vad_now1]= vad_zero(data1(:, 1+(i-1)*N:i*N));
         % 更新当前帧的VAD值
         data1(2, 1+(i-1)*N:i*2048) = vad_detected;
 
         % 第二路信号
-        [vad_detected, vad_now]= vad_zero(data2(:, 1+(i-1)*N:i*N));
+        [vad_detected, vad_now2]= vad_zero(data2(:, 1+(i-1)*N:i*N));
         % 更新当前帧的VAD值
         data2(2, 1+(i-1)*N:i*2048) = vad_detected;
 
         % 第三路信号
-        [vad_detected, vad_now]= vad_zero(data3(:, 1+(i-1)*N:i*N));
+        [vad_detected, vad_now3]= vad_zero(data3(:, 1+(i-1)*N:i*N));
         % 更新当前帧的VAD值
         data3(2, 1+(i-1)*N:i*2048) = vad_detected;
     end
@@ -72,17 +72,17 @@ for i = 1:NFrame
      % 当超过100帧时候，使用论文的VAD算法
     if (i>=101)
         % 第一路信号
-        [vad_detected, vad_now]= vad(data1(:, 1+(i-101)*N:i*N));
+        [vad_detected, vad_now1]= vad(data1(:, 1+(i-101)*N:i*N));
         % 更新当前帧的VAD值
         data1(2, 1+(i-1)*N:i*2048) = vad_detected;
 
         % 第二路信号
-        [vad_detected, vad_now]= vad(data2(:, 1+(i-101)*N:i*N));
+        [vad_detected, vad_now2]= vad(data2(:, 1+(i-101)*N:i*N));
         % 更新当前帧的VAD值
         data2(2, 1+(i-1)*N:i*2048) = vad_detected;
 
         % 第三路信号
-        [vad_detected, vad_now]= vad(data3(:, 1+(i-101)*N:i*N));
+        [vad_detected, vad_now3]= vad(data3(:, 1+(i-101)*N:i*N));
         % 更新当前帧的VAD值
         data3(2, 1+(i-1)*N:i*2048) = vad_detected;
 
