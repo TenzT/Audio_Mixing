@@ -1,11 +1,11 @@
 clear;clc;close all;
 
-%%% å‚æ•°è®¾ç½® %%%
-r = 100;  % å¾€å‰è¯»çš„å¸§æ•°
-N = 2048;% æ¯å¸§æŠ½æ ·ç‚¹æ•°
-Fs = 48000;% éŸ³é¢‘é‡‡æ ·ç‡
+%%% ²ÎÊıÉèÖÃ %%%
+r = 100;  % ÍùÇ°¶ÁµÄÖ¡Êı
+N = 2048;% Ã¿Ö¡³éÑùµãÊı
+Fs = 48000;% ÒôÆµ²ÉÑùÂÊ
 
-%%% è¯»å…¥ä¸€è·¯ä¿¡å·å¹¶å¤„ç† %%%
+%%% ¶ÁÈëÒ»Â·ĞÅºÅ²¢´¦Àí %%%
 file1 = 'interval.wav';
 [data1 fs1] = audioread(file1, 'native');
 data1 = data1 * 10;
@@ -18,7 +18,7 @@ file3 = 'low_high.wav';
 [data3 fs3] = audioread(file3, 'native');
 data3 = data3 ;
 
-% è‹¥é‡‡æ ·ç‡ä¸è¶³,é‡é‡‡æ ·æˆ48kHz
+% Èô²ÉÑùÂÊ²»×ã,ÖØ²ÉÑù³É48kHz
 if(fs1 ~= Fs)
   data1 = resample(data1, Fs, fs1);  
 end
@@ -29,7 +29,7 @@ if(fs3 ~= Fs)
     data2 = resample(data2, Fs, fs2);  
 end
 
-% å˜æˆå•å£°é“ä¿¡å·å¹¶å°†å¦ä¸€ä¸ªç»´åº¦å˜æˆVADæ ‡å¿—
+% ±ä³Éµ¥ÉùµÀĞÅºÅ²¢½«ÁíÒ»¸öÎ¬¶È±ä³ÉVAD±êÖ¾
 data1(:, 2) = ones(size(data1, 1),1);
 data1 = data1';
 
@@ -39,7 +39,7 @@ data2 = data2';
 data3(:, 2) = ones(size(data3, 1),1);
 data3 = data3';
 
-% æˆªæ–­ä¿¡å·ä½¿å¾—æŠ½æ ·ç‚¹æˆä¸ºæ•´æ•°å¸§
+% ½Ø¶ÏĞÅºÅÊ¹µÃ³éÑùµã³ÉÎªÕûÊıÖ¡
 max_length = min([size(data1, 2),size(data2, 2), size(data3,2)]);
 data1 = data1(:, 1:N * (floor(max_length/N)-1));
 data2 = data2(:, 1:N * (floor(max_length/N)-1));
@@ -47,142 +47,124 @@ data3 = data3(:, 1:N * (floor(max_length/N)-1));
 
 NFrame = size(data1, 2)/N;
 
-%%% éå†æ‰€æœ‰å¸§
+%%% ±éÀúËùÓĞÖ¡
 for i = 1:NFrame
     
-%-------- è·å–å½“å‰å¸§VAD ------------
-     % åŸºäºçŸ­æ—¶åŠŸç‡å’Œè¿‡é›¶ç‡å¾—åˆ°VAD
+%-------- »ñÈ¡µ±Ç°Ö¡VAD ------------
+     % »ùÓÚ¶ÌÊ±¹¦ÂÊºÍ¹ıÁãÂÊµÃµ½VAD
     if (i<101)
-        % ç¬¬ä¸€è·¯ä¿¡å·
-        [vad_detected, vad_now1]= vad_zero(data1(:, 1+(i-1)*N:i*N));
-        % æ›´æ–°å½“å‰å¸§çš„VADå€¼
-        data1(2, 1+(i-1)*N:i*2048) = vad_detected;
+        % µÚÒ»Â·ĞÅºÅ
+        [vad_detected1, vad_now1]= vad_zero(data1(:, 1+(i-1)*N:i*N));
+        % ¸üĞÂµ±Ç°Ö¡µÄVADÖµ
+        data1(2, 1+(i-1)*N:i*2048) = vad_detected1;
 
-        % ç¬¬äºŒè·¯ä¿¡å·
-        [vad_detected, vad_now2]= vad_zero(data2(:, 1+(i-1)*N:i*N));
-        % æ›´æ–°å½“å‰å¸§çš„VADå€¼
-        data2(2, 1+(i-1)*N:i*2048) = vad_detected;
+        % µÚ¶şÂ·ĞÅºÅ
+        [vad_detected2, vad_now2]= vad_zero(data2(:, 1+(i-1)*N:i*N));
+        % ¸üĞÂµ±Ç°Ö¡µÄVADÖµ
+        data2(2, 1+(i-1)*N:i*2048) = vad_detected2;
 
-        % ç¬¬ä¸‰è·¯ä¿¡å·
-        [vad_detected, vad_now3]= vad_zero(data3(:, 1+(i-1)*N:i*N));
-        % æ›´æ–°å½“å‰å¸§çš„VADå€¼
-        data3(2, 1+(i-1)*N:i*2048) = vad_detected;
+        % µÚÈıÂ·ĞÅºÅ
+        [vad_detected3, vad_now3]= vad_zero(data3(:, 1+(i-1)*N:i*N));
+        % ¸üĞÂµ±Ç°Ö¡µÄVADÖµ
+        data3(2, 1+(i-1)*N:i*2048) = vad_detected3;
     end
 
-     % å½“è¶…è¿‡100å¸§æ—¶å€™ï¼Œä½¿ç”¨è®ºæ–‡çš„VADç®—æ³•
+     % µ±³¬¹ı100Ö¡Ê±ºò£¬Ê¹ÓÃÂÛÎÄµÄVADËã·¨
     if (i>=101)
-        % ç¬¬ä¸€è·¯ä¿¡å·
+        % µÚÒ»Â·ĞÅºÅ
         [vad_detected, vad_now1]= vad(data1(:, 1+(i-101)*N:i*N));
-        % æ›´æ–°å½“å‰å¸§çš„VADå€¼
+        % ¸üĞÂµ±Ç°Ö¡µÄVADÖµ
         data1(2, 1+(i-1)*N:i*2048) = vad_detected;
 
-        % ç¬¬äºŒè·¯ä¿¡å·
+        % µÚ¶şÂ·ĞÅºÅ
         [vad_detected, vad_now2]= vad(data2(:, 1+(i-101)*N:i*N));
-        % æ›´æ–°å½“å‰å¸§çš„VADå€¼
+        % ¸üĞÂµ±Ç°Ö¡µÄVADÖµ
         data2(2, 1+(i-1)*N:i*2048) = vad_detected;
 
-        % ç¬¬ä¸‰è·¯ä¿¡å·
+        % µÚÈıÂ·ĞÅºÅ
         [vad_detected, vad_now3]= vad(data3(:, 1+(i-101)*N:i*N));
-        % æ›´æ–°å½“å‰å¸§çš„VADå€¼
+        % ¸üĞÂµ±Ç°Ö¡µÄVADÖµ
         data3(2, 1+(i-1)*N:i*2048) = vad_detected;
 
     end
 %---------------------------------
 
-    % å½“å‰å¸§çš„æ•°æ®ï¼Œæå–å‡ºæ¥æ–¹ä¾¿åé¢å¤„ç†
+    % µ±Ç°Ö¡µÄÊı¾İ£¬ÌáÈ¡³öÀ´·½±ãºóÃæ´¦Àí
     this_frame1 = data1(:, 1+(i-1)*N:i*2048);
     this_frame2 = data2(:, 1+(i-1)*N:i*2048);
     this_frame3 = data3(:, 1+(i-1)*N:i*2048);
+%¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª
+%                   ÂË²¨
+%¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª
+    %Êı¾İÀàĞÍ×ª»»
+    this_frame1=double(this_frame1);
+    this_frame2=double(this_frame2);
+    this_frame3=double(this_frame3);
+    %¶ÔÊı¾İ°´Ö¡½øĞĞÂË²¨
+    ii=i-1;
+    dataout1(1+(ii*2048):2048+(ii*2048)) = filter_time_variant(this_frame1(1,:),this_frame1(2,1));
+    dataout2(1+(ii*2048):2048+(ii*2048)) = filter_time_variant(this_frame2(1,:),this_frame2(2,1));
+    dataout3(1+(ii*2048):2048+(ii*2048)) = filter_time_variant(this_frame3(1,:),this_frame3(2,1));
+    % µ±Ç°Ö¡ÂË²¨ºóµÄÊı¾İ£¬ÌáÈ¡³öÀ´·½±ãºóÃæ´¦Àí
+    dataout_thisframe1=dataout1(1+(ii*2048):2048+(ii*2048));
+    dataout_thisframe2=dataout1(1+(ii*2048):2048+(ii*2048));
+    dataout_thisframe3=dataout1(1+(ii*2048):2048+(ii*2048));
 
-%-------åˆ©ç”¨vad+nowæ¥è®¡ç®—æ»¤æ³¢å™¨å’Œå“åº¦å¤„ç†--------
+
+%-------ÀûÓÃvad+nowÀ´¼ÆËãÂË²¨Æ÷ºÍÏì¶È´¦Àí--------
 
 
 end
 
-% è§‚å¯Ÿvadæ˜¯å¦æ­£ç¡®
+% ¹Û²ìvadÊÇ·ñÕıÈ·
 figure;
 subplot(211);
 plot(data1(1,:));
-title('ç¬¬ä¸€è·¯ä¿¡å·');
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('å¹…å€¼');
+title('µÚÒ»Â·ĞÅºÅ');
+xlabel('²ÉÑùµãÊı'); ylabel('·ùÖµ');
 axis([0,500000, -4e4, 4e4]);
 subplot(212);
 plot(data1(2,:));
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('VAD');
+xlabel('²ÉÑùµãÊı'); ylabel('VAD');
 axis([0,500000, -1, 2]);
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
-%                   æ»¤æ³¢
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
-%æ•°æ®ç±»å‹è½¬æ¢
-data1=double(data1);
-%è®¡ç®—æœ‰å¤šå°‘å¸§
-ii=size(data1,2)/2048;
-%å¯¹æ•°æ®æŒ‰å¸§è¿›è¡Œæ»¤æ³¢
-for i=1:1:ii
-    i=i-1;
-dataout1(1+(i*2048):2048+(i*2048)) = filter_time_variant(data1(1,1+(i*2048):2048+(i*2048)),data1(2,1+(i*2048)));
-end
-%ç”»å›¾æ¯”è¾ƒ
+
+%»­Í¼±È½Ï
 figure;
 plot(1:1:size(data1,2),data1(1,1:1:size(data1,2)),'r',1:1:size(data1,2),dataout1(1:1:size(data1,2)))
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('å¹…å€¼');
-legend('æ»¤æ³¢å‰çš„æ•°æ®' , 'æ»¤æ³¢åçš„æ•°æ®');
+xlabel('²ÉÑùµãÊı'); ylabel('·ùÖµ');
+legend('ÂË²¨Ç°µÄÊı¾İ' , 'ÂË²¨ºóµÄÊı¾İ');
 
 figure;
 subplot(211);
 plot(data2(1,:));
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('å¹…å€¼');
-title('ç¬¬äºŒè·¯ä¿¡å·');
+xlabel('²ÉÑùµãÊı'); ylabel('·ùÖµ');
+title('µÚ¶şÂ·ĞÅºÅ');
 axis([0,500000, -4e4, 4e4]);
 subplot(212);
 plot(data2(2,:));
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('VAD');
+xlabel('²ÉÑùµãÊı'); ylabel('VAD');
 axis([0,500000, -1, 2]); 
 
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
-%                   æ»¤æ³¢
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
-%æ•°æ®ç±»å‹è½¬æ¢
-data2=double(data2);
-%è®¡ç®—æœ‰å¤šå°‘å¸§
-ii=size(data2,2)/2048;
-%å¯¹æ•°æ®æŒ‰å¸§è¿›è¡Œæ»¤æ³¢
-for i=1:1:ii
-    i=i-1;
-dataout2(1+(i*2048):2048+(i*2048)) = filter_time_variant(data2(1,1+(i*2048):2048+(i*2048)),data2(2,1+(i*2048)));
-end
-%ç”»å›¾æ¯”è¾ƒ
+%»­Í¼±È½Ï
 figure;
 plot(1:1:size(data2,2),data2(1,1:1:size(data2,2)),'r',1:1:size(data2,2),dataout2(1:1:size(data2,2)))
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('å¹…å€¼');
-legend('æ»¤æ³¢å‰çš„æ•°æ®' , 'æ»¤æ³¢åçš„æ•°æ®');
+xlabel('²ÉÑùµãÊı'); ylabel('·ùÖµ');
+legend('ÂË²¨Ç°µÄÊı¾İ' , 'ÂË²¨ºóµÄÊı¾İ');
 
 
 figure;
 subplot(211);
 plot(data3(1,:));
-title('ç¬¬ä¸‰è·¯ä¿¡å·');
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('å¹…å€¼');
+title('µÚÈıÂ·ĞÅºÅ');
+xlabel('²ÉÑùµãÊı'); ylabel('·ùÖµ');
 axis([0,500000, -4e4, 4e4]);
 subplot(212);
 plot(data3(2,:));
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('VAD');
+xlabel('²ÉÑùµãÊı'); ylabel('VAD');
 axis([0,500000, -1, 2]); 
 
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
-%                   æ»¤æ³¢
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
-%æ•°æ®ç±»å‹è½¬æ¢
-data3=double(data3);
-%è®¡ç®—æœ‰å¤šå°‘å¸§
-ii=size(data3,2)/2048;
-%å¯¹æ•°æ®æŒ‰å¸§è¿›è¡Œæ»¤æ³¢
-for i=1:1:ii
-    i=i-1;
-dataout3(1+(i*2048):2048+(i*2048)) = filter_time_variant(data3(1,1+(i*2048):2048+(i*2048)),data3(2,1+(i*2048)));
-end
-%ç”»å›¾æ¯”è¾ƒ
+%»­Í¼±È½Ï
 figure;
 plot(1:1:size(data3,2),data3(1,1:1:size(data3,2)),'r',1:1:size(data3,2),dataout3(1:1:size(data3,2)))
-xlabel('é‡‡æ ·ç‚¹æ•°'); ylabel('å¹…å€¼');
-legend('æ»¤æ³¢å‰çš„æ•°æ®' , 'æ»¤æ³¢åçš„æ•°æ®');
+xlabel('²ÉÑùµãÊı'); ylabel('·ùÖµ');
+legend('ÂË²¨Ç°µÄÊı¾İ' , 'ÂË²¨ºóµÄÊı¾İ');
